@@ -46,7 +46,7 @@
    
     <div class="container">
       <h2>Introduction</h2>
-<p>The most recent <em>Morbidity and Mortality Weekly Report</em>, dated May 2, 2014, from the Centers for Disease Control and Prevention had <a href="http://www.cdc.gov/mmwr/preview/mmwrhtml/mm6317a1.htm?s_cid=mm6317a1_w">a report by Yoon et al. (2014) on potentially preventable deaths from 5 leading causes of death for people under the age of 80.</a> In this post, I use interactive bar charts and choropleths to help visualize state-wise statistics. For these charts, I use googleVis and RStudio&#39;s shiny server platform. This post was generated using slidify and the <a href="https://github.com/patilv/preventabledeaths">code necessary to recreate it and the accompanying shiny app can be found on github.</a>     </p>
+<p>The most recent <em>Morbidity and Mortality Weekly Report</em>, dated May 2, 2014, from the Centers for Disease Control and Prevention had <a href="http://www.cdc.gov/mmwr/preview/mmwrhtml/mm6317a1.htm?s_cid=mm6317a1_w">a report by Yoon et al. (2014) on potentially preventable deaths from 5 leading causes of death for people under the age of 80.</a> In this post, I use interactive bar charts and choropleths to help visualize state-wise statistics. For these charts, I use googleVis and RStudio&#39;s shiny server platform. This post was generated using slidify and the <a href="https://github.com/patilv/preventabledeaths">code necessary to recreate it can be found on github.</a> The <a href="https://github.com/patilv/preventableshiny">code for the accompanying shiny app can also be found on github.</a>      </p>
 
 <h2>Data</h2>
 
@@ -1172,7 +1172,7 @@ statewisemelt$variable = factor(statewisemelt$variable, levels(statewisemelt$var
 save(statewisemelt, file = &quot;statewisemelt.Rda&quot;)
 </code></pre>
 
-<p>As mentioned previously, this application is hosted on <a href="shinyapps.io">R-Studio&#39;s shinyapps.io</a> platform. The code for the application, along with other relevant code for this post,<a href="https://github.com/patilv/preventabledeaths">can be found on github</a>. <strong>You can hover over either the bars of the barchart or over the map to get the corresponding values.</strong>  </p>
+<p>As mentioned previously, this application is hosted on <a href="shinyapps.io">R-Studio&#39;s shinyapps.io</a> platform. As mentioned at the beginning of the post, the <a href="https://github.com/patilv/preventabledeaths">code necessary to recreate the post can be found on github.</a> The <a href="https://github.com/patilv/preventableshiny">code for the shiny app below can also be found on github.</a> <strong>You can hover over either the bars of the barchart or over the map to get the corresponding values.</strong>  </p>
 
 <iframe height="800" src="https://patilv.shinyapps.io/preventableshiny/" width="1200"></iframe>
 
