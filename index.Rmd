@@ -1,0 +1,93 @@
+---
+title       : Potentially Preventable Deaths in US
+subtitle    : 
+author      : Vivek Patil
+job         : 
+framework   : bootstrap        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+---
+
+## Introduction
+The most recent *Morbidity and Mortality Weekly Report*, dated May 2, 2014, from the Centers for Disease Control and Prevention had [a report by Yoon et al. (2014) on potentially preventable deaths from 5 leading causes of death for people under the age of 80.](http://www.cdc.gov/mmwr/preview/mmwrhtml/mm6317a1.htm?s_cid=mm6317a1_w) In this post, I use interactive bar charts and choropleths to help visualize state-wise statistics. For these charts, I use googleVis and RStudio's shiny server platform. This post was generated using slidify and the [code necessary to recreate it can be found on github.](https://github.com/patilv/preventabledeaths) The [code for the accompanying shiny app can also be found on github.](https://github.com/patilv/preventableshiny)      
+
+## Data
+The report mentions that in 2010, the top 5 causes of death - diseases of the heart, cancer, chronic lower respiratory disease, cerebrovascular diseases (stroke), and unintentional injuries accounted for approximately 63% of all deaths. For the purposes of their report, they used mortality data from the National Vital Statistics System for 2008-2010. Please [read their report]((http://www.cdc.gov/mmwr/preview/mmwrhtml/mm6317a1.htm?s_cid=mm6317a1_w) for caveats associated with the data as well as the assumptions underlying the procedures used. Implications are also discussed in the report and the discussion section of the report is really worth a read. 
+
+### Retrieve Data
+
+This section of the R code retrieves data from CDC's report. 
+
+```{r setOptions, message=FALSE,echo=FALSE}
+library(googleVis)
+op <- options(gvis.plot.tag='chart')
+```
+
+```{r}
+library(XML)
+URL="http://www.cdc.gov/mmwr/preview/mmwrhtml/mm6317a1.htm?s_cid=mm6317a1_w"
+table=readHTMLTable(URL)
+statewise=table[[1]] # first of two tables on that page
+```
+
+### Data Cleaning and Manipulations
+
+Let's clean the dataset by doing the following.
+
+1. Changing column names
+2. Removing the top 3 rows and the bottom two rows
+
+Let's also check the structure of the data.
+```{r}
+colnames(statewise)=c("State","HeartDiseasesObserved", "HeartDiseasesExpected", "HeartDiseasesPreventable",
+"CancerDiseasesObserved", "CancerDiseasesExpected", "CancerDiseasesPreventable", "ChroniclowerrespiratoryDiseasesObserved", "ChroniclowerrespiratoryDiseasesExpected", "ChroniclowerrespiratoryDiseasesPreventable",
+"CerebrovascularDiseasesObserved", "CerebrovascularDiseasesExpected", "CerebrovascularDiseasesPreventable",
+"UnintentionalinjuriesObserved", "UnintentionalinjuriesExpected", "UnintentionalinjuriesPreventable")
+statewise=statewise[-(1:3),]
+statewise=statewise[-(52:53),]
+str(statewise)
+```
+
+Let's change columns for numbers from factor variables to numeric variables and view the data using googleVis's table. **Entries can be sorted in this table by clicking on the header for a column.**
+```{r results='asis',tidy=FALSE}
+for (i in 2:16){statewise[, i] = as.character(statewise[,i])}
+for (i in 2:16){statewise[, i] = gsub(",","",statewise[,i])}
+for (i in 2:16){statewise[, i] = as.numeric(statewise[,i])}
+
+library(googleVis)
+plot(gvisTable(statewise,options=list(height=400, width=800)))
+```
+
+For each type of disease, we do the following. Instead of dealing with raw numbers of potential deaths preventable, we compute the percentage of potential deaths preventable among the number of deaths observed. We then also compute the average percentage of potential deaths preventable among the 5 categories of diseases.   
+```{r}
+statewise$PercentageHeartDiseasesPreventable=round(statewise$HeartDiseasesPreventable*100/statewise$HeartDiseasesObserved,2)
+statewise$PercentageCancerDiseasesPreventable=round(statewise$CancerDiseasesPreventable*100/statewise$CancerDiseasesObserved,2)
+statewise$PercentageChroniclowerrespiratoryDiseasesPreventable=round(statewise$ChroniclowerrespiratoryDiseasesPreventable*100/statewise$ChroniclowerrespiratoryDiseasesObserved,2)
+statewise$PercentageCerebrovascularDiseasesPreventable=round(statewise$CerebrovascularDiseasesPreventable*100/statewise$CerebrovascularDiseasesObserved,2)
+statewise$PercentageUnintentionalinjuriesPreventable=round(statewise$UnintentionalinjuriesPreventable*100/statewise$UnintentionalinjuriesObserved,2)
+
+statewise$PercentageAveragePreventableDeaths=round((statewise$PercentageHeartDiseasesPreventable+
+                                             statewise$PercentageCancerDiseasesPreventable+
+                                             statewise$PercentageChroniclowerrespiratoryDiseasesPreventable+statewise$PercentageCerebrovascularDiseasesPreventable+ statewise$PercentageUnintentionalinjuriesPreventable)/5,2)
+
+save(statewise,file="statewise.Rda")
+```
+
+## Visualizations
+
+Let's now start plotting bar charts and choropleths using googleVis within the shiny server environment. This application is hosted by RStudio in their shinyapps.io server.  Before we do that, we make the following modifications to the dataset.
+
+1. Convert it into a long form such that all columns, besides *State* are collapsed into a single column with a new column for the corresponding value.
+2. Reorder levels of the column of different diseases so that the average percentages and disease percentages are among the first few levels.
+ 
+```{r}
+library(reshape2)
+statewisemelt=melt(statewise,id="State")
+statewisemelt$variable = factor(statewisemelt$variable,levels(statewisemelt$variable)[c(21,16:20,1:15)])
+save(statewisemelt,file="statewisemelt.Rda")
+```
+
+As mentioned previously, this application is hosted on [R-Studio's shinyapps.io](shinyapps.io) platform. As mentioned at the beginning of the post, the [code necessary to recreate the post can be found on github.](https://github.com/patilv/preventabledeaths) The [code for the shiny app below can also be found on github.](https://github.com/patilv/preventableshiny) **You can hover over either the bars of the barchart or over the map to get the corresponding values.**  
+<iframe height="800" src="https://patilv.shinyapps.io/preventableshiny/" width="1200"></iframe>
