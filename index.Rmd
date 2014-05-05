@@ -89,5 +89,5 @@ statewisemelt$variable = factor(statewisemelt$variable,levels(statewisemelt$vari
 save(statewisemelt,file="statewisemelt.Rda")
 ```
 
-As mentioned previously, this application is hosted on [R-Studio's shinyapps.io](shinyapps.io) platform. As mentioned at the beginning of the post, the [code necessary to recreate the post can be found on github.](https://github.com/patilv/preventabledeaths) The [code for the shiny app below can also be found on github.](https://github.com/patilv/preventableshiny) **You can hover over either the bars of the barchart or over the map to get the corresponding values.**  
-<iframe height="800" src="https://patilv.shinyapps.io/preventableshiny/" width="1200"></iframe>
+As mentioned previously, this application is hosted on [R-Studio's shinyapps.io](shinyapps.io) platform. As mentioned at the beginning of the post, the [code necessary to recreate the post can be found on github.](https://github.com/patilv/preventabledeaths) The [code for the shiny app below can also be found on github.](https://github.com/patilv/preventableshiny) **You can hover over either the bars of the barchart or over the map to get the corresponding values.**  <b> *A quick update: If this app doesn't show up, [an alternate app hosted on R-Studio's glimmer server can be found here.](http://glimmer.rstudio.com/vivekpatil/preventabledeathsglimmer/). The code of that alternative glimmer app can [be found here.](https://github.com/patilv/preventableshinyglimmer) 
+<iframe height="825" src="https://patilv.shinyapps.io/preventableshiny/" width="1300"></iframe>
